@@ -1,14 +1,12 @@
 # Training a Neural Network from Scratch using C++ and Multithreading
 
 Girish Krishnan | [LinkedIn](https://www.linkedin.com/in/girk/) | [GitHub](https://github.com/Girish-Krishnan)
-
 ___
 
 ![Neural Net](./media/architecture.png)
-
 ![Neurons](./media/neurons.png)
 
-This project is a C++ implementation of a Neural Network from scratch. The Neural Network is trained using the MNIST dataset to classify handwritten digits. The key reference for this project is Dr. Sreedath Panat's tutorial on implementing a Neural Network from scratch in Python. The tutorial can be found on YouTube [here](https://www.youtube.com/watch?v=A83BbHFoKb8).  
+This project is a C++ implementation of a Neural Network from scratch. The Neural Network is trained using the MNIST dataset to classify handwritten digits. The key reference for this project is Dr. Sreedath Panat's tutorial on implementing a Neural Network from scratch in Python. The tutorial can be found on YouTube [here](https://www.youtube.com/watch?v=A83BbHFoKb8). 
 
 However, this project is implemented in **C++** and uses **multithreading** to speed up the training process. Another key challenge using C++ is implementing many of the matrix operations that are readily available in Python libraries such as NumPy, and parallelizing these operations using multithreading.
 
@@ -16,70 +14,11 @@ However, this project is implemented in **C++** and uses **multithreading** to s
 
 ## Mathematical Background
 
-### Dataset: MNIST Handwritten Digits
-The MNIST dataset consists of grayscale images of handwritten digits (0-9). Each image has dimensions of $28 \times 28$ pixels, and the dataset contains 10 output classes (one for each digit).
-
-- Each image is represented as a vector of 784 dimensions by flattening the $28 \times 28$ grid into a single column vector:
-  $$\mathbf{x} \in \mathbb{R}^{784}$$.
-
-- The label for each image is represented as a one-hot encoded vector:
-  $$\mathbf{y} \in \mathbb{R}^{10}, \quad \text{where } y_i = 1 \text{ if the image corresponds to digit } i, \text{ and } y_j = 0 \text{ for } j \neq i.$$
-
-The dataset is split into training and validation sets:
-- Training set: $\mathbf{X}_{\text{train}} \in \mathbb{R}^{784 \times N}$, where $N$ is the number of training samples.
-- Validation set: $\mathbf{X}_{\text{val}} \in \mathbb{R}^{784 \times M}$, where $M$ is the number of validation samples.
-
-### Neural Network Architecture
-The neural network consists of:
-1. An input layer with 784 neurons (one for each pixel).
-2. A hidden layer with $H$ neurons, using the ReLU activation function.
-3. An output layer with 10 neurons, using the softmax activation function.
-
-#### Parameters
-- $\mathbf{W}_1 \in \mathbb{R}^{H \times 784}$: Weights for the first layer.
-- $\mathbf{b}_1 \in \mathbb{R}^{H \times 1}$: Bias for the first layer.
-- $\mathbf{W}_2 \in \mathbb{R}^{10 \times H}$: Weights for the second layer.
-- $\mathbf{b}_2 \in \mathbb{R}^{10 \times 1}$: Bias for the second layer.
-
-### Forward Propagation
-1. Compute the pre-activation of the hidden layer:
-   $$\mathbf{Z}_1 = \mathbf{W}_1 \mathbf{X} + \mathbf{b}_1, \quad \mathbf{Z}_1 \in \mathbb{R}^{H \times N}$$.
-
-2. Apply the ReLU activation function:
-   $$\mathbf{A}_1 = \text{ReLU}(\mathbf{Z}_1), \quad \text{where } \text{ReLU}(z) = \max(0, z)$$.
-
-3. Compute the pre-activation of the output layer:
-   $$\mathbf{Z}_2 = \mathbf{W}_2 \mathbf{A}_1 + \mathbf{b}_2, \quad \mathbf{Z}_2 \in \mathbb{R}^{10 \times N}$$.
-
-4. Apply the softmax activation function to obtain probabilities:
-   $$\mathbf{A}_2 = \text{softmax}(\mathbf{Z}_2), \quad \text{where } [\text{softmax}(\mathbf{Z}_2)]_{ij} = \frac{\exp(\mathbf{Z}_2[i,j])}{\sum_{k=1}^{10} \exp(\mathbf{Z}_2[k,j])}$$.
-
-### Loss Function
-The cross-entropy loss is used to measure the error between predicted probabilities $\mathbf{A}_2$ and true labels $\mathbf{Y}$:
-$$\mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N} \sum_{j=1}^{10} y_{ij} \log(a_{2,ij})$$,
-where $y_{ij}$ is the true label and $a_{2,ij}$ is the predicted probability for sample $i$ and class $j$.
-
-### Backward Propagation
-1. Compute the gradient of the loss with respect to $\mathbf{Z}_2$:
-   $$\mathbf{dZ}_2 = \mathbf{A}_2 - \mathbf{Y}$$.
-
-2. Compute gradients for $\mathbf{W}_2$ and $\mathbf{b}_2$:
-   $$\mathbf{dW}_2 = \frac{1}{N} \mathbf{dZ}_2 \mathbf{A}_1^T, \quad \mathbf{db}_2 = \frac{1}{N} \sum_{i=1}^{N} \mathbf{dZ}_2[:,i]$$.
-
-3. Compute the gradient of the loss with respect to $\mathbf{Z}_1$:
-   $$\mathbf{dZ}_1 = \mathbf{W}_2^T \mathbf{dZ}_2 \odot \text{ReLU}'(\mathbf{Z}_1)$$,
-   where $\text{ReLU}'(z) = 1$ if $z > 0$, else $0$.
-
-4. Compute gradients for $\mathbf{W}_1$ and $\mathbf{b}_1$:
-   $$\mathbf{dW}_1 = \frac{1}{N} \mathbf{dZ}_1 \mathbf{X}^T, \quad \mathbf{db}_1 = \frac{1}{N} \sum_{i=1}^{N} \mathbf{dZ}_1[:,i]$$.
-
-### Parameter Update
-Update the parameters using gradient descent:
-$$\mathbf{W}_1 \leftarrow \mathbf{W}_1 - \alpha \mathbf{dW}_1, \quad \mathbf{b}_1 \leftarrow \mathbf{b}_1 - \alpha \mathbf{db}_1$$,
-
-$$\mathbf{W}_2 \leftarrow \mathbf{W}_2 - \alpha \mathbf{dW}_2, \quad \mathbf{b}_2 \leftarrow \mathbf{b}_2 - \alpha \mathbf{db}_2$$,
-
-where $\alpha$ is the learning rate.
+![Math 1](./media/math_1.png)
+![Math 2](./media/math_2.png)
+![Math 3](./media/math_3.png)
+![Math 4](./media/math_4.png)
+![Math 5](./media/math_5.png)
 
 ---
 
