@@ -14,11 +14,11 @@ However, this project is implemented in **C++** and uses **multithreading** to s
 
 ## Mathematical Background
 
-![Math 1](./media/math_1.png)
-![Math 2](./media/math_2.png)
-![Math 3](./media/math_3.png)
-![Math 4](./media/math_4.png)
-![Math 5](./media/math_5.png)
+![Math1](./media/math_1.png)
+![Math2](./media/math_2.png)
+![Math3](./media/math_3.png)
+![Math4](./media/math_4.png)
+![Math5](./media/math_5.png)
 
 ---
 
