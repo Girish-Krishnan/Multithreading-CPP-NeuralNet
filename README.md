@@ -10,6 +10,8 @@ This project is a C++ implementation of a Neural Network from scratch. The Neura
 
 However, this project is implemented in **C++** and uses **multithreading** to speed up the training process. Another key challenge using C++ is implementing many of the matrix operations that are readily available in Python libraries such as NumPy, and parallelizing these operations using multithreading.
 
+**UPDATE (12/31/2024)**: I also have a new repository that implements the same neural network using CUDA for GPU acceleration, resulting in much faster training times! You can find the repository [here](https://github.com/Girish-Krishnan/CUDA-CPP-NeuralNet).
+
 ---
 
 ## Mathematical Background
